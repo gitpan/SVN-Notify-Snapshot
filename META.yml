@@ -1,5 +1,5 @@
 name: SVN-Notify-Snapshot
-version: 0.01
+version: 0.02
 abstract: Make snapshots from Subversion activities
 author: Autrijus Tang <autrijus@autrijus.org>
 license: perl

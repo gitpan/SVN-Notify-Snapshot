@@ -1,5 +1,5 @@
 package SVN::Notify::Snapshot;
-$SVN::Notify::Snapshot::VERSION = '0.01';
+$SVN::Notify::Snapshot::VERSION = '0.02';
 
 use strict;
 use File::Spec;
@@ -15,8 +15,8 @@ SVN::Notify::Snapshot - Take snapshots from Subversion activity
 
 =head1 VERSION
 
-This document describes version 0.01 of SVN::Notify::Snapshot,
-released October 18, 2004.
+This document describes version 0.02 of SVN::Notify::Snapshot,
+released October 19, 2004.
 
 =head1 SYNOPSIS
 
@@ -44,9 +44,15 @@ use constant SuffixMap => {
     '.zip'      => '_zip',
 };
 
+sub prepare {
+    my $self = shift;
+    $self->prepare_recipients;
+}
+
 sub execute {
     my ($self) = @_;
-    my ($repos, $to) = @{$self}{qw( repos_path to )};
+    my $to = $self->{to} or return;
+    my $repos = $self->{repos_path} or return;
     my $path = $self->{handle_path} or die "Must specify handle_path";
     my $temp = tempdir( CLEANUP => 1 );
 
@@ -69,12 +75,6 @@ sub execute {
 
     $self->can($method)->($self, $temp, $from, $to);
 }
-
-sub prepare_contents { 1; }
-
-sub prepare_files { 1; }
-
-sub prepare_subject { 1; }
 
 sub _tar {
     my ($self, $temp, $from, $to, $mode) = @_;
@@ -105,9 +105,8 @@ sub _zip {
 
 sub _run {
     my $self = shift;
-    (system { $_[0] } @_) == 0 or die $?;
+    (system { $_[0] } @_) == 0 or die "Running [@_] failed with $?: $!";
 }
-
 
 1;
 
