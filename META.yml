@@ -1,0 +1,12 @@
+name: SVN-Notify-Snapshot
+version: 0.01
+abstract: Make snapshots from Subversion activities
+author: Autrijus Tang <autrijus@autrijus.org>
+license: perl
+distribution_type: module
+requires:
+  SVN::Notify: 2.22
+no_index:
+  directory:
+    - inc
+generated_by: Module::Install version 0.35
