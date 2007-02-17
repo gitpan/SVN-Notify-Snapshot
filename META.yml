@@ -1,12 +1,20 @@
+---
 name: SVN-Notify-Snapshot
-version: 0.02
-abstract: Make snapshots from Subversion activities
-author: Autrijus Tang <autrijus@autrijus.org>
+version: 0.03
+author:
+  - 'John Peacock <jpeacock@cpan.org>'
+abstract: Take snapshots from Subversion activity
 license: perl
-distribution_type: module
+resources:
+  license: http://dev.perl.org/licenses/
 requires:
-  SVN::Notify: 2.22
-no_index:
-  directory:
-    - inc
-generated_by: Module::Install version 0.35
+  Module::Build: 0.2805
+  SVN::Notify: 2.62
+provides:
+  SVN::Notify::Snapshot:
+    file: lib/SVN/Notify/Snapshot.pm
+    version: 0.03
+generated_by: Module::Build version 0.2806
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2

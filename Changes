@@ -1,3 +1,17 @@
+[Changes for 0.03 - 2007-02-17]
+
+* Absorb testing framework from SVN::Notify::Mirror.
+* Add --append-rev option (instead of hardcoding rev into filename).
+* Handle multiple targets automatically.
+* Abstract 'tar' command out (needed for restricted PATH in config file).
+* Same for 'zip'.
+* Lose Module::Install and add Module::Build instead.
+* Document all options.
+
+[Changes for /SVN-Notify-Snapshot/tags/RELEASE-0.02 - 2006-07-08]
+
+Importing last version by Autrijis/Audrey prior to updating.
+
 [Changes for 0.02 - 2004-10-19]
 
 * As suggested by David Wheeler, we now explicitly override
@@ -8,3 +22,5 @@
 [Changes for 0.01 - 2004-10-18]
 
 * Initial CPAN release.
+
+
