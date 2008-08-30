@@ -1,5 +1,5 @@
 package SVN::Notify::Snapshot;
-$SVN::Notify::Snapshot::VERSION = '0.03';
+$SVN::Notify::Snapshot::VERSION = '0.04';
 
 use strict;
 use File::Spec;
@@ -22,11 +22,13 @@ use constant SuffixMap => {
 __PACKAGE__->register_attributes(
     handle_path => 'handle-path=s',
     append_rev  => 'append-rev',
+    tag_regex	=> 'tag-regex=s',
 );
 
 sub prepare {
     my $self = shift;
     $self->prepare_recipients;
+    $self->prepare_files;
 }
 
 sub execute {
@@ -38,7 +40,8 @@ sub execute {
 	my $temp = tempdir( CLEANUP => 0 );
 
 	my ($to_base, $to_path, $to_suffix) = fileparse($to, qr{\..*});
-	my $method = $self->SuffixMap->{lc($to_suffix)} or die "Unknown suffix: $to_suffix";
+	my $method = $self->SuffixMap->{lc($to_suffix)}
+	    or die "Unknown suffix: $to_suffix";
 
 	my $base = (
 	    defined($self->{snapshot_base})
@@ -46,8 +49,19 @@ sub execute {
 	);
 
 	if ( $self->append_rev ) {
-	    $to = "$to_path/$to_base-".$self->{revision}.".$to_suffix";
+	    $to = "$to_path/$to_base-".$self->{revision}.$to_suffix;
 	    $base .= '-'.$self->{revision};
+	}
+
+	if ( defined $self->{tag_regex} ) {
+	    my $regex = $self->{tag_regex};
+            my ($tag) = grep /$regex/, @{$self->{'files'}->{'A'}};
+	    return unless $tag;
+	    $path = $tag;
+	    unless ( $self->append_rev ) {
+		$tag =~ s/^.+\/tags\/(.+)/$1/;
+		$base = $tag;
+	    }
 	}
 
 	my $from = File::Spec->catdir($temp, $base);
@@ -107,8 +121,8 @@ SVN::Notify::Snapshot - Take snapshots from Subversion activity
 
 =head1 VERSION
 
-This document describes version 0.03 of SVN::Notify::Snapshot,
-released February 17, 2007.
+This document describes version 0.04 of SVN::Notify::Snapshot,
+released June 28, 2008.
 
 =head1 SYNOPSIS
 
@@ -117,6 +131,7 @@ Use F<svnnotify> in F<post-commit>:
   svnnotify --repos-path "$1" --revision "$2" \
     --to "/tmp/snapshot-$2.tar.gz" --handler Snapshot \
     [--append-rev] --handle-path pathname [options]
+    [--tag-regex]
 
 or as part of a SVN::Notify::Config YAML file:
 
@@ -142,7 +157,7 @@ module into your postcommit script:
 
 =item 1. postcommit script
 
-Add a line to an existing postcommit script that sets the <--handler>
+Add a line to an existing postcommit script that sets the C<--handler>
 commandline option to "Snapshot".  This method has the drawback that it
 will require multiple Perl interpreters to start up (one per handler
 line), which B<will> delay the commit from completing on the client.
@@ -205,6 +220,7 @@ assuming that the C</project1/trunk> changed in revs 1, 5, and 6.
 =head1 AUTHORS
 
 John Peacock E<lt>jpeacock@cpan.orgE<gt>
+
 Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
 
 
@@ -223,7 +239,8 @@ L<http://rt.cpan.org>.
 
 =head1 LICENCE AND COPYRIGHT
 
-Copyright 2007 John Peacock E<lt>jpeacock@cpan.orgE<gt>.
+Copyright (c) 2007-2008 John Peacock E<lt>jpeacock@cpan.orgE<gt>.
+
 Portions copyright 2004 by Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>.
 
 This program is free software; you can redistribute it and/or modify it

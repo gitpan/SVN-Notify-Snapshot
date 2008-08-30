@@ -16,7 +16,7 @@ sudo ./Build install
 
 * Copyright
 
-Copyright 2006 by John Peacock <jpeacock@cpan.org>
+Copyright (c) 2007-2008 by John Peacock <jpeacock@cpan.org>
 Portions copyright 2004 by Autrijus Tang <autrijus@autrijus.org>.
 
 This program is free software; you can redistribute it and/or modify it
